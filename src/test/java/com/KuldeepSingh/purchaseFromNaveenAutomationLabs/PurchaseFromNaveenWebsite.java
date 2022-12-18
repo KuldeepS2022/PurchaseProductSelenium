@@ -12,6 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 public class PurchaseFromNaveenWebsite {
 	WebDriver wd;
@@ -33,24 +34,22 @@ public class PurchaseFromNaveenWebsite {
 		password.sendKeys("StewieisOG");
 		button.click();
 		String titleOfPage = wd.getTitle();
-		System.out.println(titleOfPage);
-		Assert.assertEquals(titleOfPage, "My Account", "Failed to Login");
+		SoftAssert sa=new SoftAssert();
+		
+		sa.assertEquals(titleOfPage, "My Account", "Failed to Login");
 		wd.findElement(By.cssSelector("ul[class='nav navbar-nav'] >li:nth-of-type(6) a")).click();
 		String titleOf2ndPage = wd.getTitle();
-		Assert.assertEquals(titleOf2ndPage, "Phones & PDAs", "Something went Wrong");
-//		wd.findElement(By.cssSelector("#content>div.row:nth-of-type(2)>div:first-of-type>div>div:last-of-type a"))
-//				.click();
+		sa.assertEquals(titleOf2ndPage, "Phones & PDAs", "Something went Wrong");
 		wd.findElement(By.cssSelector("#content>div:nth-of-type(2) div:nth-of-type(3) >div div:nth-of-type(2) a"))
-		.click();
+				.click();
 		String titleOf3rdPage = wd.getTitle();
-		//Assert.assertEquals(titleOf3rdPage, "HTC Touch HD", "Something went Wrong");
-		Assert.assertEquals(titleOf3rdPage, "Palm Treo Pro", "Something went Wrong");
+		sa.assertEquals(titleOf3rdPage, "Palm Treo Pro", "Something went Wrong");
 		wd.findElement(By.cssSelector("button#button-cart")).click();
 		sleep();
 		String readText = wd.findElement(By.cssSelector("#cart-total")).getText();
-		Assert.assertEquals(readText, "1 item(s) - $279.99", "There is More than 1 item in cart");
+		sa.assertEquals(readText, "1 item(s) - $279.99", "There is More than 1 item in cart");
 		wd.findElement(By.cssSelector("#cart-total")).click();
-		
+
 		wd.findElement(By.cssSelector("ul[class=\"dropdown-menu pull-right\"] p>a:last-of-type")).click();
 		sleep();
 		wd.findElement(By.cssSelector("form[class=form-horizontal]>div:nth-of-type(3) input")).click();
@@ -68,43 +67,34 @@ public class PurchaseFromNaveenWebsite {
 		address1.sendKeys("31 Spooner Street");
 		city.sendKeys("Quahog");
 		postCode.sendKeys("02907");
-		Select sc = new Select(wd.findElement(By.cssSelector("#input-payment-country")));
-		sc.selectByValue("38");
+		WebElement country = wd.findElement(By.cssSelector("#input-payment-country"));
+		selectByValue(country, "38");
 		WebElement state = wd.findElement(By.cssSelector("select[name='zone_id']"));
-		Select sc1 = new Select(wd.findElement(By.cssSelector("select[name='zone_id']")));
-		sc1.selectByValue("609");
+		selectByValue(state, "609");
 		wd.findElement(By.cssSelector("input[value='Continue']")).click();
 		WebElement radiobtn = wd
 				.findElement(By.cssSelector("div[class='panel-collapse collapse in'] form>div:first-of-type input"));
-		if (!radiobtn.isSelected()) {
-			radiobtn.click();
-		}
+		clickIfNotClick(radiobtn);
 		wd.findElement(By.cssSelector("#button-shipping-address:last-of-type")).click();
 		WebElement flatRate = wd.findElement(By.cssSelector("input[value='flat.flat']"));
-		if (!flatRate.isSelected()) {
-			flatRate.click();
-		}
+		clickIfNotClick(flatRate);
 		WebElement textArea = wd.findElement(By.cssSelector("textarea[name='comment']"));
-		textArea.sendKeys("Okeetyyy");
+		textArea.sendKeys("Okeeyyy okeeyyy");
 		wd.findElement(By.cssSelector("#button-shipping-method:last-of-type")).click();
 		WebElement radiobtnCashDeliv = wd.findElement(By.cssSelector("input[value='cod']"));
-		if (!radiobtnCashDeliv.isSelected()) {
-			radiobtnCashDeliv.click();
-		}
+		clickIfNotClick(radiobtnCashDeliv);
 		WebElement checkBocTerm = wd.findElement(By.cssSelector("input[name='agree']"));
-		if (!checkBocTerm.isSelected()) {
-			checkBocTerm.click();
-		}
+		clickIfNotClick(checkBocTerm);
 		wd.findElement(By.cssSelector("#button-payment-method:last-of-type")).click();
 		WebElement productName = wd.findElement(By.cssSelector("div.table-responsive a"));
-		Assert.assertEquals(productName.getText(), "Palm Treo Pro", "Oops Wrong item in cart");
+		sa.assertEquals(productName.getText(), "Palm Treo Pro", "Oops Wrong item in cart");
 		WebElement productQuantity = wd
 				.findElement(By.cssSelector("div.table-responsive >table>tbody td:nth-of-type(3)"));
-		Assert.assertEquals(productQuantity.getText(), "1", "More than 1 item found");
+		sa.assertEquals(productQuantity.getText(), "1", "More than 1 item found");
 		wd.findElement(By.cssSelector("#button-confirm:first-of-type")).click();
 		sleep();
 		WebElement confirmText = wd.findElement(By.cssSelector("#content h1"));
-		Assert.assertEquals(confirmText.getText(), "Your order has been placed!", "SomeThing Went Wrong");
+		sa.assertEquals(confirmText.getText(), "Your order has been placed!", "SomeThing Went Wrong");
 
 	}
 
@@ -115,10 +105,21 @@ public class PurchaseFromNaveenWebsite {
 
 	public void sleep() {
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void clickIfNotClick(WebElement element) {
+		if (!element.isSelected()) {
+			element.click();
+		}
+	}
+
+	public void selectByValue(WebElement element, String value) {
+		Select sc = new Select(element);
+		sc.selectByValue(value);
 	}
 
 }
